@@ -56,7 +56,7 @@ int execute_command(char *command, char *program_name)
 			token = strtok(NULL, " ");
 		}
 		args[i] = NULL;
-		execve(args[0], args, NULL);
+		execvp(args[0], args);
 		perror(program_name);
 		exit(EXIT_FAILURE);
 	}
