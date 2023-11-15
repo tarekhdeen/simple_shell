@@ -33,21 +33,31 @@ int read_command(char *command)
 /**
  * execute_command - executing command
  * @command: an input string
+ * @program_name: program name
  *
  * Return: 0
  */
-int execute_command(char *command)
+int execute_command(char *command, char *program_name)
 {
 	int status;
 	char *args[MAX_INPUT_LENGTH];
+	char *token;
+	int i = 0;
 	pid_t pid = fork();
 
 	command[strcspn(command, "\n")] = 0;
 
 	if (pid == 0)
 	{
+		token = strtok(command, " ");
+		while (token != NULL)
+		{
+			args[i++] = token;
+			token = strtok(NULL, " ");
+		}
+		args[i] = NULL;
 		execve(args[0], args, NULL);
-		perror("Error");
+		perror(program_name);
 		exit(EXIT_FAILURE);
 	}
 	else if (pid < 0)
