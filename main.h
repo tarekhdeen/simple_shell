@@ -14,5 +14,7 @@ int read_command(char *command);
 int execute_command(char *command);
 int tokenize_command(char *command, char *args[]);
 void print_environment(void);
+void exit_shell(int status);
+void change_directory(char *args[]);
 
 #endif /* MAIN_H */

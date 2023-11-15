@@ -69,7 +69,6 @@ void print_environment(void)
 /**
  * execute_command - executing command
  * @command: an input string
- * @env_var: env
  *
  * Return: 0
  */
@@ -83,9 +82,17 @@ int execute_command(char *command)
 
 	if (pid == 0)
 	{
-		execve(args[0], args, environ);
-		perror("Error");
-		exit(EXIT_FAILURE);
+		if (strcmp(args[0], "cd") == 0)
+		{
+			change_directory(args);
+			exit(EXIT_SUCCESS);
+		}
+		else
+		{
+			execve(args[0], args, environ);
+			perror("Error");
+			exit(EXIT_FAILURE);
+		}
 	}
 	else if (pid < 0)
 	{
