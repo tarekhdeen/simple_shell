@@ -39,13 +39,14 @@ int read_command(char *command)
 int execute_command(char *command)
 {
 	int status;
+	char *args[MAX_INPUT_LENGTH];
 	pid_t pid = fork();
 
 	command[strcspn(command, "\n")] = 0;
 
 	if (pid == 0)
 	{
-		execlp(command, command, NULL);
+		execve(args[0], args, NULL);
 		perror("Error");
 		exit(EXIT_FAILURE);
 	}
