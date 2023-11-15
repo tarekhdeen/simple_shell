@@ -6,6 +6,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+extern char **environ;
+
 #define MAX_INPUT_LENGTH 100
 
 /**
@@ -13,7 +15,7 @@
  */
 void display_prompt(void)
 {
-	printf("cisfun$ ");
+	hd_print("cisfun$ ");
 }
 
 /**
@@ -28,35 +30,74 @@ int read_command(char *command)
 }
 
 
+
+/**
+ * tokenize_command - tokenize command
+ * @command: a string
+ * @args: an array
+ *
+ * Return: i
+ */
+int tokenize_command(char *command, char *args[])
+{
+	char *token;
+	int i = 0;
+
+<<<<<<< HEAD
+=======
+	token = strtok(command, " \n");
+	while (token != NULL)
+	{
+		args[i++] = token;
+		token = strtok(NULL, " \n");
+	}
+	args[i] = NULL;
+
+	return (i);
+}
+
+/**
+ * print_environment - print env
+ */
+void print_environment(void)
+{
+	char **env = environ;
+
+	while (*env)
+	{
+		hd_print("%s\n", *env);
+		env++;
+	}
+}
+
+>>>>>>> 12487fb6ad67f3471018e825445fb68957ab471a
 /**
  * execute_command - executing command
  * @command: an input string
- * @program_name: program name
  *
  * Return: 0
  */
 int execute_command(char *command, char *program_name)
 {
-	int status;
 	char *args[MAX_INPUT_LENGTH];
-	char *token;
-	int i = 0;
+	int status;
 	pid_t pid = fork();
 
-	command[strcspn(command, "\n")] = 0;
+	tokenize_command(command, args);
 
 	if (pid == 0)
 	{
-		token = strtok(command, " ");
-		while (token != NULL)
+		if (strcmp(args[0], "cd") == 0)
 		{
-			args[i++] = token;
-			token = strtok(NULL, " ");
+			change_directory(args);
+			exit(EXIT_SUCCESS);
 		}
-		args[i] = NULL;
-		execvp(args[0], args);
-		perror(program_name);
-		exit(EXIT_FAILURE);
+		else
+		{
+			execvp(args[0], args);
+			perror(program_name);
+			exit(EXIT_FAILURE);
+		}
 	}
 	else if (pid < 0)
 	{
@@ -66,7 +107,8 @@ int execute_command(char *command, char *program_name)
 	else
 	{
 		waitpid(pid, &status, 0);
-
-		return (0);
+		{
+			return (WIFEXITED(status) ? WEXITSTATUS(status) : -1);
+		}
 	}
 }
