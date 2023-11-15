@@ -28,8 +28,6 @@ int read_command(char *command)
 }
 
 
-
-
 /**
  * execute_command - executing command
  * @command: an input string
