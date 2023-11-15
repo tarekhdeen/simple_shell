@@ -13,7 +13,13 @@
  */
 void display_prompt(void)
 {
-	printf("cisfun$ ");
+	const char *prompt = "cisfun$ ";
+
+	while (*prompt != '\0')
+	{
+		_putchar(*prompt);
+		prompt++;
+	}
 }
 
 /**
