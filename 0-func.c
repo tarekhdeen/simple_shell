@@ -6,8 +6,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-extern char **environ;
-
 #define MAX_INPUT_LENGTH 100
 
 /**
@@ -29,42 +27,8 @@ int read_command(char *command)
 	return (fgets(command, MAX_INPUT_LENGTH, stdin) != NULL);
 }
 
-/**
- * tokenize_command - tokenize command
- * @command: a string
- * @args: an array
- *
- * Return: i
- */
-int tokenize_command(char *command, char *args[])
-{
-	char *token;
-	int i = 0;
 
-	token = strtok(command, " \n");
-	while (token != NULL)
-	{
-		args[i++] = token;
-		token = strtok(NULL, " \n");
-	}
-	args[i] = NULL;
 
-	return (i);
-}
-
-/**
- * print_environment - print env
- */
-void print_environment(void)
-{
-	char **env = environ;
-
-	while (*env)
-	{
-		hd_print("%s\n", *env);
-		env++;
-	}
-}
 
 /**
  * execute_command - executing command
@@ -74,25 +38,16 @@ void print_environment(void)
  */
 int execute_command(char *command)
 {
-	char *args[MAX_INPUT_LENGTH];
 	int status;
 	pid_t pid = fork();
 
-	tokenize_command(command, args);
+	command[strcspn(command, "\n")] = 0;
 
 	if (pid == 0)
 	{
-		if (strcmp(args[0], "cd") == 0)
-		{
-			change_directory(args);
-			exit(EXIT_SUCCESS);
-		}
-		else
-		{
-			execve(args[0], args, environ);
-			perror("Error");
-			exit(EXIT_FAILURE);
-		}
+		execlp(command, command, NULL);
+		perror("Error");
+		exit(EXIT_FAILURE);
 	}
 	else if (pid < 0)
 	{
@@ -102,8 +57,7 @@ int execute_command(char *command)
 	else
 	{
 		waitpid(pid, &status, 0);
-		{
-			return (0);
-		}
+
+		return (0);
 	}
 }

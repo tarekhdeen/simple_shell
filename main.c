@@ -13,44 +13,23 @@
  */
 int main(void)
 {
-	char command[MAX_INPUT_LENGTH], *args[MAX_INPUT_LENGTH];
-	int status;
+	char command[MAX_INPUT_LENGTH];
 
 	while (1)
 	{
 		display_prompt();
+
 		if (!read_command(command))
 		{
 			break;
 		}
-		if (strcmp(command, "exit\n") == 0)
+
+		if (execute_command(command) == -1)
 		{
-			exit_shell(0);
-		}
-		else if (strncmp(command, "exit ", 5) == 0)
-		{
-			status = atoi(command + 5);
-			exit_shell(status);
-		}
-		else if (strcmp(command, "env\n") == 0)
-		{
-			print_environment();
-		}
-		else
-		{
-			tokenize_command(command, args);
-			if (strncmp(command, "cd", 2) == 0)
-			{
-				change_directory(args);
-			}
-			else
-			{
-				if (execute_command(command) == -1)
-				{
-					break;
-				}
-			}
+			break;
 		}
 	}
+
+
 	return (0);
 }

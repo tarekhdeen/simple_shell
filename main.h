@@ -12,6 +12,7 @@ void hd_print(const char *format, ...);
 void display_prompt(void);
 int read_command(char *command);
 int execute_command(char *command);
+void commands_ators(char *commands);
 int tokenize_command(char *command, char *args[]);
 void print_environment(void);
 void exit_shell(int status);
