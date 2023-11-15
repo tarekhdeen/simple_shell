@@ -8,11 +8,11 @@
 
 #define MAX_INPUT_LENGTH 100
 
-int _putchar(char c);
+void hd_print(const char *format, ...);
 void display_prompt(void);
 int read_command(char *command);
-int execute_command(char *args[], char *program_name);
-void commands_ators(char *commands);
+int execute_command(char *command, char *program_name);
+void commands_ators(char *commands, char *program_name);
 int tokenize_command(char *command, char *args[]);
 void print_environment(void);
 void exit_shell(int status);

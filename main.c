@@ -13,33 +13,37 @@
  */
 int main(void)
 {
-	char command[MAX_INPUT_LENGTH];
-	char *args[MAX_INPUT_LENGTH];
+	char input[MAX_INPUT_LENGTH];
 	char *program_name = "./shell";
-	int num_tokens, exit_status, i;
+	int status;
 
 	while (1)
 	{
 		display_prompt();
 
-		if (!read_command(command))
+		if (!read_command(input))
 		{
 			break;
 		}
 
-		num_tokens = tokenize_command(command, args);
-		exit_status = execute_command(args, program_name);
-
-		for (i = 0; i < num_tokens; i++)
+		if (strcmp(input, "exit\n") == 0)
 		{
-			free(args[i]);
+			exit_shell(0);
 		}
-		if (exit_status == -1)
+		else if (strncmp(input, "exit ", 5) == 0)
 		{
-			fprintf(stderr, "Command execution failed\n");
+			status = atoi(input + 5);
+			exit_shell(status);
+		}
+		else if (strcmp(input, "env\n") == 0)
+		{
+			print_environment();
+		}
+		else
+		{
+			commands_ators(input, program_name);
 		}
 	}
-
 
 	return (0);
 }

@@ -6,6 +6,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+extern char **environ;
+
 #define MAX_INPUT_LENGTH 100
 
 /**
@@ -13,13 +15,7 @@
  */
 void display_prompt(void)
 {
-	const char *prompt = "cisfun$ ";
-
-	while (*prompt != '\0')
-	{
-		_putchar(*prompt);
-		prompt++;
-	}
+	hd_print("cisfun$ ");
 }
 
 /**
@@ -34,61 +30,69 @@ int read_command(char *command)
 }
 
 /**
- * tokenize_command - Tokenize the command and dynamically allocate memory
- *                    for the args array
- * @command: An input string
- * @args:    The array to store the tokens
+ * tokenize_command - tokenize command
+ * @command: a string
+ * @args: an array
  *
- * Return: Number of tokens
+ * Return: i
  */
 int tokenize_command(char *command, char *args[])
 {
 	char *token;
 	int i = 0;
 
-	token = strtok(command, " ");
+	token = strtok(command, " \n");
 	while (token != NULL)
 	{
-		args[i] = malloc(strlen(token) + 1);
-		if (args[i] == NULL)
-		{
-			perror("Error allocating memory");
-			exit(EXIT_FAILURE);
-		}
-		strcpy(args[i], token);
-		i++;
-		token = strtok(NULL, " ");
+		args[i++] = token;
+		token = strtok(NULL, " \n");
 	}
 	args[i] = NULL;
 
 	return (i);
 }
 
+/**
+ * print_environment - print env
+ */
+void print_environment(void)
+{
+	char **env = environ;
+
+	while (*env)
+	{
+		hd_print("%s\n", *env);
+		env++;
+	}
+}
 
 /**
  * execute_command - executing command
- * @args: an input string
- * @program_name: program name
+ * @command: an input string
  *
  * Return: 0
  */
-int execute_command(char *args[], char *program_name)
+int execute_command(char *command, char *program_name)
 {
+	char *args[MAX_INPUT_LENGTH];
 	int status;
 	pid_t pid = fork();
 
+	tokenize_command(command, args);
+
 	if (pid == 0)
 	{
-		if (args[0][0] == '/')
+		if (strcmp(args[0], "cd") == 0)
 		{
-			execv(args[0], args);
+			change_directory(args);
+			exit(EXIT_SUCCESS);
 		}
 		else
 		{
 			execvp(args[0], args);
+			perror(program_name);
+			exit(EXIT_FAILURE);
 		}
-		perror(program_name);
-		exit(EXIT_FAILURE);
 	}
 	else if (pid < 0)
 	{
@@ -98,6 +102,8 @@ int execute_command(char *args[], char *program_name)
 	else
 	{
 		waitpid(pid, &status, 0);
-		return (WIFEXITED(status) ? WEXITSTATUS(status) : -1);
+		{
+			return (WIFEXITED(status) ? WEXITSTATUS(status) : -1);
+		}
 	}
 }
