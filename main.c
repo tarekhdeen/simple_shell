@@ -14,22 +14,31 @@
 int main(void)
 {
 	char command[MAX_INPUT_LENGTH];
+	char *args[MAX_INPUT_LENGTH];
 	char *program_name = "./shell";
+	int num_tokens, exit_status, i;
 
-		while (1)
+	while (1)
+	{
+		display_prompt();
+
+		if (!read_command(command))
 		{
-			display_prompt();
-
-			if (!read_command(command))
-			{
-				break;
-			}
-
-			if (execute_command(command, program_name) == -1)
-			{
-				break;
-			}
+			break;
 		}
+
+		num_tokens = tokenize_command(command, args);
+		exit_status = execute_command(args, program_name);
+
+		for (i = 0; i < num_tokens; i++)
+		{
+			free(args[i]);
+		}
+		if (exit_status == -1)
+		{
+			fprintf(stderr, "Command execution failed\n");
+		}
+	}
 
 
 	return (0);

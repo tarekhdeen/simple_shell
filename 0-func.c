@@ -27,36 +27,60 @@ int read_command(char *command)
 	return (fgets(command, MAX_INPUT_LENGTH, stdin) != NULL);
 }
 
+/**
+ * tokenize_command - Tokenize the command and dynamically allocate memory
+ *                    for the args array
+ * @command: An input string
+ * @args:    The array to store the tokens
+ *
+ * Return: Number of tokens
+ */
+int tokenize_command(char *command, char *args[])
+{
+	char *token;
+	int i = 0;
 
+	token = strtok(command, " ");
+	while (token != NULL)
+	{
+		args[i] = malloc(strlen(token) + 1);
+		if (args[i] == NULL)
+		{
+			perror("Error allocating memory");
+			exit(EXIT_FAILURE);
+		}
+		strcpy(args[i], token);
+		i++;
+		token = strtok(NULL, " ");
+	}
+	args[i] = NULL;
+
+	return (i);
+}
 
 
 /**
  * execute_command - executing command
- * @command: an input string
+ * @args: an input string
  * @program_name: program name
  *
  * Return: 0
  */
-int execute_command(char *command, char *program_name)
+int execute_command(char *args[], char *program_name)
 {
 	int status;
-	char *args[MAX_INPUT_LENGTH];
-	char *token;
-	int i = 0;
 	pid_t pid = fork();
-
-	command[strcspn(command, "\n")] = 0;
 
 	if (pid == 0)
 	{
-		token = strtok(command, " ");
-		while (token != NULL)
+		if (args[0][0] == '/')
 		{
-			args[i++] = token;
-			token = strtok(NULL, " ");
+			execv(args[0], args);
 		}
-		args[i] = NULL;
-		execvp(args[0], args);
+		else
+		{
+			execvp(args[0], args);
+		}
 		perror(program_name);
 		exit(EXIT_FAILURE);
 	}
@@ -68,7 +92,6 @@ int execute_command(char *command, char *program_name)
 	else
 	{
 		waitpid(pid, &status, 0);
-
-		return (0);
+		return (WIFEXITED(status) ? WEXITSTATUS(status) : -1);
 	}
 }
