@@ -6,7 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#define MAX_INPUT_LENGTH 1024
+#define MAX_INPUT_LENGTH 100
 
 void hd_print(const char *format, ...);
 void display_prompt(void);
