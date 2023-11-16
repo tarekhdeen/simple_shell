@@ -29,6 +29,8 @@ int read_command(char *command)
 	return (fgets(command, MAX_INPUT_LENGTH, stdin) != NULL);
 }
 
+
+
 /**
  * tokenize_command - tokenize command
  * @command: a string
@@ -41,6 +43,8 @@ int tokenize_command(char *command, char *args[])
 	char *token;
 	int i = 0;
 
+<<<<<<< HEAD
+=======
 	token = strtok(command, " \n");
 	while (token != NULL)
 	{
@@ -66,6 +70,7 @@ void print_environment(void)
 	}
 }
 
+>>>>>>> 12487fb6ad67f3471018e825445fb68957ab471a
 /**
  * execute_command - executing command
  * @command: an input string
