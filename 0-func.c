@@ -8,14 +8,14 @@
 
 extern char **environ;
 
-#define MAX_INPUT_LENGTH 100
+#define MAX_INPUT_LENGTH 1024
 
 /**
  * display_prompt - Display prompt
  */
 void display_prompt(void)
 {
-	hd_print("cisfun$ ");
+	printf("cisfun$ ");
 }
 
 /**
